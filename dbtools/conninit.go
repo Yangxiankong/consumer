@@ -4,16 +4,14 @@ import (
 	"Consumer/conftools"
 	"Consumer/filepath"
 	"fmt"
-	"gorm.io/gorm"
-	"gorm.io/driver/mysql"
 	redigo "github.com/garyburd/redigo/redis"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 	"strings"
 )
 
 // 数据库连接
-var Db4Snatch *gorm.DB
-var Db4Open *gorm.DB
-var Db4Redis *gorm.DB
+var Db *gorm.DB
 
 // RedisPool redis连接池
 var RedisPool *redigo.Pool
@@ -22,9 +20,7 @@ func init() {
 	mysqlconf := conftools.GetMysqlConfig(fmt.Sprintf("%v%v", filepath.ConfRoot, filepath.MysqlConf))
 	dsn := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?%v", mysqlconf.User, mysqlconf.Password, mysqlconf.Host, mysqlconf.Port, mysqlconf.Db, mysqlconf.Param)
 	var err error
-	Db4Snatch, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	Db4Open, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	Db4Redis, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	Db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		fmt.Println(err.Error())

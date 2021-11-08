@@ -12,8 +12,8 @@ import (
 func SaveToCache(uid int, conn redis.Conn) {
 	var usr User
 	var recs []Record
-	Db4Redis.Where("id = ?", uid).Find(&usr)
-	Db4Redis.Where("uid = ?", uid).Find(&recs)
+	Db.Where("id = ?", uid).Find(&usr)
+	Db.Where("uid = ?", uid).Find(&recs)
 	var envs []Env
 	for _, val := range recs {
 		envs = append(envs, Env{
@@ -47,7 +47,7 @@ func SnatchWrite(uid int, eid int, val int, stime int64, N int) {
 	DelCache(uid, conn)
 
 	//mysql写入 事务
-	Db4Snatch.Transaction(func(tx *gorm.DB) error {
+	Db.Transaction(func(tx *gorm.DB) error {
 		usr := User{
 			Id:    uid,
 			Money: 0,
@@ -84,7 +84,7 @@ func OpenWrite(uid, eid, val int) {
 	conn := RedisPool.Get()
 	DelCache(uid, conn)
 
-	Db4Open.Transaction(func(tx *gorm.DB) error {
+	Db.Transaction(func(tx *gorm.DB) error {
 		rec := Record{Id: eid}
 		if err := tx.Where("id = ?", eid).Select("opened").Find(&rec).Error; err != nil {
 			return err
