@@ -7,10 +7,13 @@ import (
 	"github.com/Shopify/sarama"
 	"os"
 	"strconv"
+	"sync"
 )
 
 // 这波我直接开摆了 个人建议不要尝试看懂这一大段代码
 func main() {
+	wg := sync.WaitGroup{}
+	wg.Add(1)
 	addr := os.Getenv("MQ_ADDR")
 	consumer, err := sarama.NewConsumer([]string{addr}, nil)
 	if err != nil {
@@ -91,4 +94,5 @@ func main() {
 			}
 		}(pc)
 	}
+	wg.Wait()
 }
